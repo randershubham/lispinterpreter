@@ -7,25 +7,22 @@
 JAVAC = javac
 
 # Java compiler flags
-JAVAFLAGS = -g 
+JAVAFLAGS = -g
 
 # Creating a .class file
 COMPILE = $(JAVAC) $(JAVAFLAGS)
 
 # One of these should be the "main" class listed in Runfile
-CLASS_FILES = FirstJava.class
+CLASS_FILES = *.class
 
 # The first target is the one that is executed when you invoke
-# "make". 
+# "make".
 
-all: clean $(CLASS_FILES) 
+all: clean $(CLASS_FILES)
 
 # The line describing the action starts with <TAB>
 %.class : %.java
-	$(COMPILE) $<
+	$(COMPILE) *.java
 
 clean:
 	$(RM) *.class
-
-
-
