@@ -20,7 +20,13 @@ public class Parser {
                 System.exit(1);
             }
             Deque<String> tokenStrings = new ArrayDeque<>();
-            parseExpression(tokenStrings);
+            try {
+                parseExpression(tokenStrings);
+            } catch (ParseException | InvalidTokenException e) {
+                System.out.println("ERROR: " + e.getLocalizedMessage());
+                // TODO: FIX ME
+                System.exit(0);
+            }
 
             ExpressionTree root = new ExpressionTree();
             getExpressionTree(tokenStrings, root);
@@ -65,7 +71,7 @@ public class Parser {
     }
 
 
-    private void parseExpression(Deque<String> stringDeque) {
+    private void parseExpression(Deque<String> stringDeque) throws ParseException, InvalidTokenException {
         Stack<String> evaluationTreeStack = new Stack<>();
         Token currentToken = Scanner.getCurrentToken();
         Tokens currentTokenType = currentToken.getTokenType();
@@ -85,7 +91,7 @@ public class Parser {
                 evaluationTreeStack.push("(");
             } else if (currentTokenType.equals(Tokens.CLOSING_PARENTHESES)) {
                 if (evaluationTreeStack.isEmpty()) {
-                    throw new RuntimeException("Error!! wrong expression is present");
+                    throw new ParseException("Not following the right Grammar");
                 }
                 stringDeque.addLast(currentToken.getStringTokenValue());
                 evaluationTreeStack.pop();
@@ -93,10 +99,10 @@ public class Parser {
                     break;
                 }
             } else if (currentTokenType.equals(Tokens.ERROR)) {
-                throw new RuntimeException("Bad Token Received");
+                throw new InvalidTokenException("Invalid token " + currentToken.getStringTokenValue());
             } else if (currentTokenType.equals(Tokens.EOF)) {
                 if (!evaluationTreeStack.isEmpty()) {
-                    throw new RuntimeException("Bad Token Received");
+                    throw new ParseException("Not following the right Grammar");
                 }
             }
             Scanner.moveToNext();
@@ -105,7 +111,7 @@ public class Parser {
         }
 
         if (!evaluationTreeStack.isEmpty()) {
-            throw new RuntimeException("Bad Token Received");
+            throw new ParseException("Not following the right Grammar");
         }
     }
 

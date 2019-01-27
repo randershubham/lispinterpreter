@@ -13,8 +13,18 @@ public class Scanner {
 
     private static Token currentToken = null;
 
+    private static final String INPUT_PATH = "C:\\Users\\shubham\\StudioProjects\\lispinterpreter\\src\\main\\java\\com\\rander\\lisp\\interpreter\\input.txt";
 
     private static final Supplier<BufferedReader> FILE_READER_SUPPLIER = () -> new BufferedReader(new InputStreamReader(System.in));
+
+   /* private static final Supplier<BufferedReader> FILE_READER_SUPPLIER = () -> {
+        try {
+            return new BufferedReader(new FileReader(new File(INPUT_PATH)));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    };*/
 
     private static final BufferedReader BUFFERED_READER = FILE_READER_SUPPLIER.get();
 
