@@ -1,0 +1,1 @@
+java -cp ./src/main/java/.  com/rander/lisp/interpreter/Parser 

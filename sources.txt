@@ -1,0 +1,9 @@
+./src/main/java/com/rander/lisp/interpreter/ExpressionTree.java
+./src/main/java/com/rander/lisp/interpreter/InvalidTokenException.java
+./src/main/java/com/rander/lisp/interpreter/ParseException.java
+./src/main/java/com/rander/lisp/interpreter/LexicalAnalyzer.java
+./src/main/java/com/rander/lisp/interpreter/Token.java
+./src/main/java/com/rander/lisp/interpreter/Tokens.java
+./src/main/java/com/rander/lisp/interpreter/Parser.java
+./src/main/java/duplicate/LexicalAnalyzer2.java
+./src/main/java/duplicate/Parser.java
