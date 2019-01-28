@@ -15,14 +15,12 @@ public class Parser {
                 System.exit(1);
             }
 
-            ExpressionTree root = new ExpressionTree();
             try {
-                parse(root);
+                prettyPrint(parse());
             } catch (ParseException | InvalidTokenException e) {
                 System.out.println("ERROR: " + e.getLocalizedMessage());
                 System.exit(1);
             }
-            prettyPrint(root);
             System.out.println();
         }
     }
@@ -47,6 +45,41 @@ public class Parser {
             LexicalAnalyzer.moveToNext();
             return root;
         } else if (LexicalAnalyzer.getCurrentToken().getTokenType().equals(Tokens.NUMERIC_ATOMS)) {
+            root.setValue(LexicalAnalyzer.getCurrentToken().getIntegerTokenValue().toString());
+            root.setAtomNode(true);
+            LexicalAnalyzer.moveToNext();
+            return root;
+        } else if (LexicalAnalyzer.getCurrentToken().getTokenType().equals(Tokens.ERROR)) {
+            throw new InvalidTokenException("Invalid token " + LexicalAnalyzer.getCurrentToken().getStringTokenValue());
+        } else {
+            throw new ParseException("Invalid Grammar");
+        }
+    }
+
+    private ExpressionTree parse() throws ParseException, InvalidTokenException {
+
+        if (LexicalAnalyzer.getCurrentToken().getTokenType().equals(Tokens.OPEN_PARENTHESES)) {
+            ExpressionTree root = new ExpressionTree();
+            ExpressionTree temp = root;
+            LexicalAnalyzer.moveToNext();
+            while (!LexicalAnalyzer.getCurrentToken().getTokenType().equals(Tokens.CLOSING_PARENTHESES)) {
+                ExpressionTree expressionTree = parse();
+                temp.setLeft(expressionTree);
+                temp.setRight(new ExpressionTree());
+                temp = temp.getRight();
+            }
+            LexicalAnalyzer.moveToNext();
+            temp.setValue("NIL");
+            temp.setAtomNode(true);
+            return root;
+        } else if (LexicalAnalyzer.getCurrentToken().getTokenType().equals(Tokens.LITERAL_ATOMS)) {
+            ExpressionTree root = new ExpressionTree();
+            root.setValue(LexicalAnalyzer.getCurrentToken().getStringTokenValue());
+            root.setAtomNode(true);
+            LexicalAnalyzer.moveToNext();
+            return root;
+        } else if (LexicalAnalyzer.getCurrentToken().getTokenType().equals(Tokens.NUMERIC_ATOMS)) {
+            ExpressionTree root = new ExpressionTree();
             root.setValue(LexicalAnalyzer.getCurrentToken().getIntegerTokenValue().toString());
             root.setAtomNode(true);
             LexicalAnalyzer.moveToNext();
