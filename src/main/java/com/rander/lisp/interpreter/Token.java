@@ -3,7 +3,7 @@ package com.rander.lisp.interpreter;
 /**
  * Created by shubham on 1/24/2019.
  */
-class Token {
+public class Token {
     final private Tokens tokenType;
     final private String stringTokenValue;
     final private Integer integerTokenValue;

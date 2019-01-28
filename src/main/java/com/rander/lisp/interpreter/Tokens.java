@@ -3,7 +3,7 @@ package com.rander.lisp.interpreter;
 /**
  * Created by shubham on 1/24/2019.
  */
-enum Tokens {
+public enum Tokens {
 
     LITERAL_ATOMS("LITERAL ATOMS"),
     NUMERIC_ATOMS("NUMERIC ATOMS"),

@@ -1,119 +1,75 @@
 package com.rander.lisp.interpreter;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.Stack;
-
 /**
- * Created by shubham on 1/23/2019.
+ * Created by Shubham on 1/23/2019.
  */
 public class Parser {
 
     private void parseStart() {
-
         while (true) {
-            Token currentToken = Scanner.getCurrentToken();
+            Token currentToken = LexicalAnalyzer.getCurrentToken();
             if (currentToken.getTokenType() == Tokens.EOF) {
                 break;
             } else if (currentToken.getTokenType() == Tokens.ERROR) {
                 System.out.println(Tokens.ERROR.getTokenName() + ":  Invalid token " + currentToken.getStringTokenValue());
                 System.exit(1);
             }
-            Deque<String> tokenStrings = new ArrayDeque<>();
-            try {
-                parseExpression(tokenStrings);
-            } catch (ParseException | InvalidTokenException e) {
-                System.out.println("ERROR: " + e.getLocalizedMessage());
-                // TODO: FIX ME
-                System.exit(0);
-            }
 
             ExpressionTree root = new ExpressionTree();
-            getExpressionTree(tokenStrings, root);
-            System.out.println(prettyPrint(root, new StringBuilder()).toString());
-            Scanner.moveToNext();
+            try {
+                parse(root);
+            } catch (ParseException | InvalidTokenException e) {
+                System.out.println("ERROR: " + e.getLocalizedMessage());
+                System.exit(1);
+            }
+            prettyPrint(root);
+            System.out.println();
         }
     }
 
-    private ExpressionTree getExpressionTree(Deque<String> tokenStrings, ExpressionTree root) {
+    private ExpressionTree parse(ExpressionTree root) throws ParseException, InvalidTokenException {
         ExpressionTree temp = root;
-        if (tokenStrings.peek().equals("(")) {
-            tokenStrings.pop();
-            while (!tokenStrings.peek().equals(")")) {
-                ExpressionTree expressionTree = getExpressionTree(tokenStrings, new ExpressionTree());
+        if (LexicalAnalyzer.getCurrentToken().getTokenType().equals(Tokens.OPEN_PARENTHESES)) {
+            LexicalAnalyzer.moveToNext();
+            while (!LexicalAnalyzer.getCurrentToken().getTokenType().equals(Tokens.CLOSING_PARENTHESES)) {
+                ExpressionTree expressionTree = parse(new ExpressionTree());
                 temp.setLeft(expressionTree);
                 temp.setRight(new ExpressionTree());
                 temp = temp.getRight();
             }
-            tokenStrings.pop();
+            LexicalAnalyzer.moveToNext();
             temp.setValue("NIL");
             temp.setAtomNode(true);
             return root;
-        } else if (!tokenStrings.peek().equals(")")) {
-            root.setValue(tokenStrings.pop());
+        } else if (LexicalAnalyzer.getCurrentToken().getTokenType().equals(Tokens.LITERAL_ATOMS)) {
+            root.setValue(LexicalAnalyzer.getCurrentToken().getStringTokenValue());
             root.setAtomNode(true);
+            LexicalAnalyzer.moveToNext();
             return root;
+        } else if (LexicalAnalyzer.getCurrentToken().getTokenType().equals(Tokens.NUMERIC_ATOMS)) {
+            root.setValue(LexicalAnalyzer.getCurrentToken().getIntegerTokenValue().toString());
+            root.setAtomNode(true);
+            LexicalAnalyzer.moveToNext();
+            return root;
+        } else if (LexicalAnalyzer.getCurrentToken().getTokenType().equals(Tokens.ERROR)) {
+            throw new InvalidTokenException("Invalid token " + LexicalAnalyzer.getCurrentToken().getStringTokenValue());
+        } else {
+            throw new ParseException("Invalid Grammar");
         }
-        return null;
     }
 
-    private StringBuilder prettyPrint(ExpressionTree node, StringBuilder builder) {
+    private void prettyPrint(ExpressionTree node) {
         if (node.getLeft() == null && node.getRight() == null) {
-            builder.append(node.getValue());
-            return builder;
+            System.out.print(node.getValue());
+            return ;
         }
-        builder.append("(");
-        prettyPrint(node.getLeft(), builder);
-        builder.append(" . ");
-        prettyPrint(node.getRight(), builder);
-        builder.append(")");
-        return builder;
+        System.out.print("(");
+        prettyPrint(node.getLeft());
+        System.out.print(" . ");
+        prettyPrint(node.getRight());
+        System.out.print(")");
     }
 
-
-    private void parseExpression(Deque<String> stringDeque) throws ParseException, InvalidTokenException {
-        Stack<String> evaluationTreeStack = new Stack<>();
-        Token currentToken = Scanner.getCurrentToken();
-        Tokens currentTokenType = currentToken.getTokenType();
-        while (true) {
-            if (currentTokenType.equals(Tokens.NUMERIC_ATOMS)) {
-                stringDeque.addLast(currentToken.getIntegerTokenValue().toString());
-                if (evaluationTreeStack.isEmpty()) {
-                    break;
-                }
-            } else if (currentTokenType.equals(Tokens.LITERAL_ATOMS)) {
-                stringDeque.addLast(currentToken.getStringTokenValue());
-                if (evaluationTreeStack.isEmpty()) {
-                    break;
-                }
-            } else if (currentTokenType.equals(Tokens.OPEN_PARENTHESES)) {
-                stringDeque.addLast(currentToken.getStringTokenValue());
-                evaluationTreeStack.push("(");
-            } else if (currentTokenType.equals(Tokens.CLOSING_PARENTHESES)) {
-                if (evaluationTreeStack.isEmpty()) {
-                    throw new ParseException("Not following the right Grammar");
-                }
-                stringDeque.addLast(currentToken.getStringTokenValue());
-                evaluationTreeStack.pop();
-                if (evaluationTreeStack.isEmpty()) {
-                    break;
-                }
-            } else if (currentTokenType.equals(Tokens.ERROR)) {
-                throw new InvalidTokenException("Invalid token " + currentToken.getStringTokenValue());
-            } else if (currentTokenType.equals(Tokens.EOF)) {
-                if (!evaluationTreeStack.isEmpty()) {
-                    throw new ParseException("Not following the right Grammar");
-                }
-            }
-            Scanner.moveToNext();
-            currentToken = Scanner.getCurrentToken();
-            currentTokenType = currentToken.getTokenType();
-        }
-
-        if (!evaluationTreeStack.isEmpty()) {
-            throw new ParseException("Not following the right Grammar");
-        }
-    }
 
     public static void main(String[] args) {
         Parser p = new Parser();
