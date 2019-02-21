@@ -1,5 +1,3 @@
-package com.rander.lisp.interpreter;
-
 import java.util.HashMap;
 import java.util.Map;
 

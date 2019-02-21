@@ -1,5 +1,3 @@
-package com.rander.lisp.interpreter;
-
 import java.io.*;
 
 import java.util.function.Supplier;
