@@ -6,5 +6,6 @@ rm -rf project
 mv project.zip ~
 cd ~
 unzip project.zip
+cd project
 make
 Runfile < input.txt
