@@ -9,3 +9,5 @@ unzip project.zip
 cd project
 make
 Runfile < input.txt
+cd ..
+rm -rf project
