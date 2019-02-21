@@ -41,5 +41,7 @@ public enum PrimitiveFunctions {
         return FUNCTIONS_HASH_MAP.get(functionName);
     }
 
-
+    public String getFunctionName() {
+        return functionName;
+    }
 }

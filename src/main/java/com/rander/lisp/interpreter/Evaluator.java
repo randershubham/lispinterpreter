@@ -31,12 +31,7 @@ public class Evaluator {
             throw new EvaluationException("Did not found a function " + tree.getLeft());
         }
 
-        String functionName = tree.getLeft().getToken().getStringTokenValue();
-        PrimitiveFunctions function = PrimitiveFunctions.getPrimitiveFunction(functionName);
-
-        if(function == null) {
-            throw new EvaluationException("Invalid function defined: " + functionName);
-        }
+        PrimitiveFunctions function = getFirstFunction(tree);
 
         switch (function) {
             case CAR:
@@ -60,7 +55,7 @@ public class Evaluator {
             case NULL:
                 return evalToken(tree);
             default:
-                throw new EvaluationException("Invalid function defined: " + functionName);
+                throw new EvaluationException("Invalid function defined: " + function.getFunctionName());
         }
 
     }
@@ -73,18 +68,14 @@ public class Evaluator {
                 throw new EvaluationException(t.getLeft() + " is not a list");
             }
 
-            int length = lengthOfExpressionTree(tree);
-
-            if(length != 2) {
-                throw new EvaluationException(tree.getLeft() + ": requires 2 elements, found " + length + " in " + tree);
-            }
+            validateLength(tree, 2);
         }
         
         for (ExpressionTree t = tree.getRight(); !t.isAtomNode(); t = t.getRight()) {
             ExpressionTree tree1 = eval(t.getLeft().getLeft());
             ExpressionTree tree2 = eval(t.getLeft().getRight().getLeft());
 
-            if (!isNil(tree1)) {
+            if (!isNilNode(tree1)) {
                 return tree2;
             }
         }
@@ -93,14 +84,10 @@ public class Evaluator {
     }
 
     private ExpressionTree evalToken(ExpressionTree tree) throws EvaluationException {
-        int length = lengthOfExpressionTree(tree);
 
-        if(length != 2) {
-            throw new EvaluationException(tree.getLeft() + ": requires 2 elements, found " + length + " in " + tree);
-        }
+        validateLength(tree, 2);
+        PrimitiveFunctions function = getFirstFunction(tree);
 
-        String functionName = tree.getLeft().getToken().getValue();
-        PrimitiveFunctions function = PrimitiveFunctions.getPrimitiveFunction(functionName);
         ExpressionTree tree1 = eval(tree.getRight().getLeft());
 
         switch (function) {
@@ -118,30 +105,20 @@ public class Evaluator {
             }
             case NULL: {
                 ExpressionTree answer = new ExpressionTree();
-                answer.setToken(new Token(Tokens.LITERAL_ATOMS, isNil(tree1) ? T : NIL, null));
+                answer.setToken(new Token(Tokens.LITERAL_ATOMS, isNilNode(tree1) ? T : NIL, null));
                 answer.setAtomNode(true);
                 return answer;
             }
             default:
-                throw new EvaluationException("Invalid function: " + functionName);
+                throw new EvaluationException("Invalid function: " + function.getFunctionName());
         }
 
     }
 
     private ExpressionTree evalArithmetic(ExpressionTree tree) throws EvaluationException {
-        
-        int length = lengthOfExpressionTree(tree);
 
-        if(length != 3) {
-            throw new EvaluationException(tree.getLeft() + ": requires 3 elements, found " + length + " in " + tree);
-        }
-
-        String functionName = tree.getLeft().getToken().getValue();
-        PrimitiveFunctions function = PrimitiveFunctions.getPrimitiveFunction(functionName);
-
-        if(function == null) {
-            throw new EvaluationException("Invalid function defined: " + functionName);
-        }
+        validateLength(tree, 3);
+        PrimitiveFunctions function = getFirstFunction(tree);
 
         ExpressionTree tree1 = eval(tree.getRight().getLeft());
         ExpressionTree tree2 = eval(tree.getRight().getRight().getLeft());
@@ -159,10 +136,10 @@ public class Evaluator {
         }
 
         if (!tree1.getToken().getTokenType().equals(Tokens.NUMERIC_ATOMS)) {
-            throw new EvaluationException(functionName + ": " + tree1 + " requires numbers, but got literal atom");
+            throw new EvaluationException(function.getFunctionName() + ": " + tree1 + " requires numbers, but got literal atom");
         }
         if (!tree2.getToken().getTokenType().equals(Tokens.NUMERIC_ATOMS)) {
-            throw new EvaluationException(functionName + ": " + tree2 + " requires numbers, but got literal atom");
+            throw new EvaluationException(function.getFunctionName() + ": " + tree2 + " requires numbers, but got literal atom");
         }
 
         int i1 = tree1.getToken().getIntegerTokenValue();
@@ -204,17 +181,13 @@ public class Evaluator {
                 return answer;
             }
             default:
-                throw new EvaluationException("Invalid function: " + functionName);
+                throw new EvaluationException("Invalid function: " + function.getFunctionName());
         }
     }
 
     private ExpressionTree evalCons(ExpressionTree tree) throws EvaluationException {
 
-        int length = lengthOfExpressionTree(tree);
-
-        if (length != 3) {
-            throw new EvaluationException(tree.getLeft() + ": Expected 3 elements, found " + length + " in " + tree);
-        }
+        validateLength(tree, 3);
 
         ExpressionTree tree1 = eval(tree.getRight().getLeft());
         ExpressionTree tree2 = eval(tree.getRight().getRight().getLeft());
@@ -228,23 +201,13 @@ public class Evaluator {
 
     private ExpressionTree evalCarCdr(ExpressionTree tree) throws EvaluationException {
 
-        int length = lengthOfExpressionTree(tree);
+        validateLength(tree, 2);
+        PrimitiveFunctions function = getFirstFunction(tree);
 
-        if(length != 2) {
-            throw new EvaluationException(tree.getLeft() + ": requires 2 elements, found " + length + " in " + tree);
-        }
-
-        String functionName = tree.getLeft().getToken().getValue();
         ExpressionTree tree1 = eval(tree.getRight().getLeft());
 
         if(tree1.isAtomNode()) {
             throw new EvaluationException("Found a leaf node instead of list for CDR/CAR function in the list: " + tree1);
-        }
-
-        PrimitiveFunctions function = PrimitiveFunctions.getPrimitiveFunction(functionName);
-
-        if(function == null) {
-            throw new EvaluationException("Invalid function defined: " + functionName);
         }
 
         switch (function) {
@@ -253,7 +216,7 @@ public class Evaluator {
             case CDR:
                 return tree1.getRight();
             default:
-                throw new EvaluationException("Invalid function defined: " + functionName);
+                throw new EvaluationException("Invalid function defined: " + function.getFunctionName());
         }
 
     }
@@ -279,14 +242,33 @@ public class Evaluator {
     }
 
     private boolean isList(ExpressionTree expressionTree) {
-        return (isNil(expressionTree) || isList(expressionTree.getRight()));
+        return (isNilNode(expressionTree) || isList(expressionTree.getRight()));
     }
 
-    private boolean isNil(ExpressionTree s) {
+    private boolean isNilNode(ExpressionTree s) {
         return s.isAtomNode()
                 && (s.getToken().getTokenType().equals(Tokens.LITERAL_ATOMS)
                         || s.getToken().getTokenType().equals(Tokens.NIL))
                 && s.getToken().getStringTokenValue().equals("NIL");
+    }
+
+    private void validateLength(ExpressionTree tree, int requireLength) throws EvaluationException {
+        int length = lengthOfExpressionTree(tree);
+
+        if(length != requireLength) {
+            throw new EvaluationException(tree.getLeft() + ": requires " + requireLength + " elements, found " + length + " in " + tree);
+        }
+    }
+
+    private PrimitiveFunctions getFirstFunction(ExpressionTree tree) throws EvaluationException {
+        String functionName = tree.getLeft().getToken().getValue();
+        PrimitiveFunctions function = PrimitiveFunctions.getPrimitiveFunction(functionName);
+
+        if(function == null) {
+            throw new EvaluationException("Invalid function defined: " + functionName);
+        }
+
+        return function;
     }
 
 }
