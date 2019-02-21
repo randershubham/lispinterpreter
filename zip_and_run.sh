@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-mkdir -p project
+rm -rf project
+mkdir project
 find . \( -name '*.java' -or -name 'makefile' -or -name 'Runfile' -or -name 'input.txt' \) -exec cp {} ./project/  \;
 zip -r project.zip project
 rm -rf project
