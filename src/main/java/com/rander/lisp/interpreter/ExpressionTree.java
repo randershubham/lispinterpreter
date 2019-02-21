@@ -7,14 +7,16 @@ public class ExpressionTree {
 
     private ExpressionTree left;
     private ExpressionTree right;
+    private Token token;
     private String value;
-    private Boolean isAtomNode;
+    private boolean isAtomNode;
 
-    public ExpressionTree(ExpressionTree left, ExpressionTree right, String value, Boolean isAtomNode) {
+    public ExpressionTree(ExpressionTree left, ExpressionTree right, String value, Boolean isAtomNode, Token token) {
         this.left = left;
         this.right = right;
         this.value = value;
         this.isAtomNode = isAtomNode;
+        this.token = token;
     }
 
     public ExpressionTree() {
@@ -45,7 +47,7 @@ public class ExpressionTree {
         this.value = value;
     }
 
-    public Boolean getAtomNode() {
+    public Boolean isAtomNode() {
         return isAtomNode;
     }
 
@@ -53,8 +55,36 @@ public class ExpressionTree {
         isAtomNode = atomNode;
     }
 
+    public Token getToken() {
+        return token;
+    }
+
+    public void setToken(Token token) {
+        this.token = token;
+    }
+
     @Override
     public String toString() {
-        return "" + value + "";
+        if (isAtomNode()) {
+            return token.getValue();
+        }
+        StringBuilder stringBuilder = new StringBuilder("(");
+        ExpressionTree t;
+
+        for (t = this; !t.isAtomNode(); t = t.getRight()) {
+            stringBuilder.append(t.getLeft());
+            if (!t.getRight().isAtomNode()) {
+                stringBuilder.append(" ");
+            }
+        }
+
+        if (t.getToken().getValue().equals("NIL")) {
+            stringBuilder.append(")");
+        } else {
+            stringBuilder.append(" . ");
+            stringBuilder.append(t.getToken().toString());
+            stringBuilder.append(")");
+        }
+        return stringBuilder.toString();
     }
 }

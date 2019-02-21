@@ -10,6 +10,7 @@ public enum Tokens {
     OPEN_PARENTHESES("OPEN PARENTHESES"),
     CLOSING_PARENTHESES("CLOSING PARENTHESES"),
     ERROR("ERROR"),
+    NIL("NIL"),
     EOF("EOF");
 
     String tokenName;
