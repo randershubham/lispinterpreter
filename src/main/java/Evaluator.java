@@ -66,7 +66,7 @@ public class Evaluator {
                 throw new EvaluationException(t.getLeft() + " is not a list");
             }
 
-            validateLength(tree, 2);
+            validateLength(t.getLeft(), 2);
         }
         
         for (ExpressionTree t = tree.getRight(); !t.isAtomNode(); t = t.getRight()) {
@@ -78,7 +78,7 @@ public class Evaluator {
             }
         }
 
-        throw new EvaluationException("Condition did not match");
+        throw new EvaluationException("All conditions failed, verify the input");
     }
 
     private ExpressionTree evalToken(ExpressionTree tree) throws EvaluationException {
@@ -103,7 +103,8 @@ public class Evaluator {
             }
             case NULL: {
                 ExpressionTree answer = new ExpressionTree();
-                answer.setToken(new Token(Tokens.LITERAL_ATOMS, isNilNode(tree1) ? T : NIL, null));
+                Token token = new Token(Tokens.LITERAL_ATOMS, isNilNode(tree1) ? T : NIL, null);
+                answer.setToken(token);
                 answer.setAtomNode(true);
                 return answer;
             }
