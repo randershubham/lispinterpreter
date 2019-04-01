@@ -10,8 +10,8 @@ public class LexicalAnalyzer {
 
     private static Token currentToken = null;
 
-    //private static final String INPUT_PATH = "C:\\Users\\shubham\\StudioProjects\\lispinterpreter\\src\\main\\resources\\input2.txt";
-    /*private static final String INPUT_PATH = "C:\\Users\\shubham\\Downloads\\input_gen";
+    //private static final String INPUT_PATH = "C:\\Users\\shubham\\StudioProjects\\lispinterpreter\\src\\main\\resources\\defun_input.txt";
+    /*private static final String INPUT_PATH = "C:\\Users\\shubham\\Downloads\\long_input.txt";
 
 
     private static final Supplier<BufferedReader> FILE_READER_SUPPLIER = () -> {
