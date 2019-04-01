@@ -10,8 +10,11 @@ unzip project.zip
 cd project
 make
 echo "************************************************************************************"
+echo "Simple Input"
 sh Runfile < input.txt
+echo "Defun Input"
 sh Runfile < defun_input.txt
+echo "Long Input"
 sh Runfile < long_input.txt
 echo "************************************************************************************"
 cd ..
