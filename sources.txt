@@ -1,8 +1,10 @@
 ./src/main/java/EvaluationException.java
 ./src/main/java/Evaluator.java
+./src/main/java/Evaluator2.java
 ./src/main/java/ExpressionTree.java
 ./src/main/java/InvalidTokenException.java
 ./src/main/java/LexicalAnalyzer.java
+./src/main/java/LispEvaluator.java
 ./src/main/java/ParseException.java
 ./src/main/java/Parser.java
 ./src/main/java/PrimitiveFunctions.java

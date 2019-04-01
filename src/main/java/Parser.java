@@ -3,10 +3,12 @@
  */
 public class Parser {
 
-    private final Evaluator evaluator;
+    private final LispEvaluator evaluator;
+    private final Evaluator2 evaluator2;
 
-    public Parser(Evaluator evaluator) {
+    public Parser(LispEvaluator evaluator, Evaluator2 evaluator2) {
         this.evaluator = evaluator;
+        this.evaluator2 = evaluator2;
     }
 
     private void parseStart() {
@@ -22,9 +24,10 @@ public class Parser {
             try {
                 ExpressionTree tree = parse();
                 //System.out.println(Utils.prettyPrintExpressionTree(tree, new StringBuilder()).toString());
-                ExpressionTree answer = evaluator.eval(tree);
+                ExpressionTree aList = new ExpressionTree(null, null, "NIL", true, new Token(Tokens.NIL, "NIL", null));
+                ExpressionTree answer = evaluator.myInt(tree);
                 System.out.println(answer.toString());
-            } catch (ParseException | InvalidTokenException | EvaluationException e) {
+            } catch (ParseException | InvalidTokenException e) {
                 System.out.println("ERROR: " + e.getLocalizedMessage());
                 System.exit(1);
             }
@@ -79,7 +82,7 @@ public class Parser {
 
 
     public static void main(String[] args) {
-        Parser p = new Parser(new Evaluator());
+        Parser p = new Parser(new LispEvaluator(), new Evaluator2());
         p.parseStart();
     }
 

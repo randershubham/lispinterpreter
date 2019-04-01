@@ -59,6 +59,7 @@ public class ExpressionTree {
 
     public void setToken(Token token) {
         this.token = token;
+        this.value = token.getValue();
     }
 
     @Override
@@ -76,7 +77,7 @@ public class ExpressionTree {
             }
         }
 
-        if (t.getToken().getValue().equals("NIL")) {
+        if (t.getToken() != null && "NIL".equals(t.getToken().getValue())) {
             stringBuilder.append(")");
         } else {
             stringBuilder.append(" . ");

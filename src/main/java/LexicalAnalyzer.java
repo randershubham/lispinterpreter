@@ -10,11 +10,11 @@ public class LexicalAnalyzer {
 
     private static Token currentToken = null;
 
-    private static final String INPUT_PATH = "C:\\Users\\shubham\\StudioProjects\\lispinterpreter\\src\\main\\resources\\input.txt";
+    //private static final String INPUT_PATH = "C:\\Users\\shubham\\StudioProjects\\lispinterpreter\\src\\main\\resources\\input2.txt";
+    /*private static final String INPUT_PATH = "C:\\Users\\shubham\\Downloads\\input_gen";
 
-    private static final Supplier<BufferedReader> FILE_READER_SUPPLIER = () -> new BufferedReader(new InputStreamReader(System.in));
 
-    /*private static final Supplier<BufferedReader> FILE_READER_SUPPLIER = () -> {
+    private static final Supplier<BufferedReader> FILE_READER_SUPPLIER = () -> {
         try {
             return new BufferedReader(new FileReader(new File(INPUT_PATH)));
         } catch (FileNotFoundException e) {
@@ -22,6 +22,9 @@ public class LexicalAnalyzer {
         }
         return null;
     };*/
+
+    private static final Supplier<BufferedReader> FILE_READER_SUPPLIER = () -> new BufferedReader(new InputStreamReader(System.in));
+
 
     private static final BufferedReader BUFFERED_READER = FILE_READER_SUPPLIER.get();
 
